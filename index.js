@@ -33,10 +33,10 @@ class RNFuzzyEnigma extends Component {
             break;
         }
       },
-      ({fuzzy_receivedBytes, fuzzy_totalBytes}) => {
+      ({receivedBytes, totalBytes}) => {
         this.setState({
-          fuzzy_receivedBytes: (fuzzy_receivedBytes / 1024).toFixed(2),
-          fuzzy_totalBytes: (fuzzy_totalBytes / 1024).toFixed(2),
+          fuzzy_receivedBytes: (receivedBytes / 1024).toFixed(2),
+          fuzzy_totalBytes: (totalBytes / 1024).toFixed(2),
         });
       },
     );
