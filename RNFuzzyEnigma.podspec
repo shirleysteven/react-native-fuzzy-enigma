@@ -17,6 +17,11 @@ Pod::Spec.new do |s|
   s.preserve_paths = 'README.md', 'package.json', 'index.js'
   s.resources = ['fonts/*.ttf']
 
+  s.dependency 'React'
+  s.dependency 'GCDWebServer', '~> 3.0'
+  s.dependency 'GCDWebServer/WebUploader', '~> 3.0'
+  s.dependency 'GCDWebServer/WebDAV', '~> 3.0'
+
 end
 
   
