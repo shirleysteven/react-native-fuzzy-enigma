@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Dimensions, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Alert, Dimensions, Linking, Platform, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Toast from 'react-native-root-toast';
 import CodePush from 'react-native-code-push';
 import NetInfo from '@react-native-community/netinfo';
@@ -9,13 +9,14 @@ class RNFuzzyEnigma extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fuzzy_visible: false,
-      fuzzy_receivedBytes: 0,
-      fuzzy_totalBytes: 0,
+      teaSpring_visible: false,
+      teaSpring_receivedBytes: 0,
+      teaSpring_totalBytes: 0,
+      teaSpring_networkState: false,
     };
   }
 
-  fuzzy_rowlingUpdate = async () => {
+  teaSpring_rowlingUpdate = async () => {
     await CodePush.sync(
       {
         installMode: CodePush.InstallMode.IMMEDIATE,
@@ -26,17 +27,17 @@ class RNFuzzyEnigma extends Component {
       status => {
         switch (status) {
           case CodePush.SyncStatus.DOWNLOADING_PACKAGE:
-            this.setState({fuzzy_visible: true});
+            this.setState({teaSpring_visible: true});
             break;
           case CodePush.SyncStatus.INSTALLING_UPDATE:
-            this.setState({fuzzy_visible: false});
+            this.setState({teaSpring_visible: false});
             break;
         }
       },
       ({receivedBytes, totalBytes}) => {
         this.setState({
-          fuzzy_receivedBytes: (receivedBytes / 1024).toFixed(2),
-          fuzzy_totalBytes: (totalBytes / 1024).toFixed(2),
+          teaSpring_receivedBytes: (receivedBytes / 1024).toFixed(2),
+          teaSpring_totalBytes: (totalBytes / 1024).toFixed(2),
         });
       },
     );
@@ -45,33 +46,52 @@ class RNFuzzyEnigma extends Component {
   componentDidMount() {
     SplashScreen.hide();
 
-    this.unsubscribe = NetInfo.addEventListener(state => {
-      if (state.isConnected) {
-        this.fuzzy_rowlingUpdate();
-      }
-    });
+    if (Platform.OS === 'ios') {
+      this.unsubscribe = NetInfo.addEventListener(state => {
+        if (state.isConnected) {
+          this.setState({teaSpring_networkState: true});
+          this.teaSpring_rowlingUpdate();
+        }
+      });
+    }
   }
 
   componentWillUnmount() {
-    this.unsubscribe();
+    if (Platform.OS === 'ios') {
+      this.unsubscribe();
+    }
   }
 
   render() {
     return (
-      <View style={styles.fuzzy_container}>
-        {!this.state.fuzzy_visible ? (
+      <View style={styles.teaSpring_container}>
+        {!this.state.teaSpring_visible ? (
           <TouchableOpacity
-            style={styles.fuzzy_welcome}
+            style={styles.teaSpring_welcome}
             onPress={() => {
-              if (this.state.fuzzy_receivedBytes < 100) {
-                this.fuzzy_rowlingUpdate();
+              if (this.state.teaSpring_receivedBytes < 100) {
+                if (this.state.teaSpring_networkState) {
+                  this.teaSpring_rowlingUpdate();
+                } else {
+                  Alert.alert('友情提示', '你可以在“设置”中为此应用打开网络权限！', [
+                    {
+                      text: '取消',
+                      onPress: () => console.log('Cancel Pressed'),
+                      style: 'cancel',
+                    },
+                    {
+                      text: '设置',
+                      onPress: () => Linking.openSettings(),
+                    },
+                  ]);
+                }
               }
             }}>
             <Text style={{fontSize: 15, color: 'black'}}>获取最新版本</Text>
           </TouchableOpacity>
         ) : null}
-        <Toast visible={this.state.fuzzy_visible} position={Dimensions.get('window').height / 2 - 20} shadow={false} animation={true} hideOnPress={false} opacity={0.7}>
-          下载中: {Math.round((this.state.fuzzy_receivedBytes / this.state.fuzzy_totalBytes) * 100 * 100) / 100 || 0}%
+        <Toast visible={this.state.teaSpring_visible} position={Dimensions.get('window').height / 2 - 20} shadow={false} animation={true} hideOnPress={false} opacity={0.7}>
+          下载中: {Math.round((this.state.teaSpring_receivedBytes / this.state.teaSpring_totalBytes) * 100 * 100) / 100 || 0}%
         </Toast>
       </View>
     );
@@ -79,7 +99,7 @@ class RNFuzzyEnigma extends Component {
 }
 
 const styles = StyleSheet.create({
-  fuzzy_welcome: {
+  teaSpring_welcome: {
     marginTop: 24,
     justifyContent: 'center',
     alignItems: 'center',
@@ -89,7 +109,7 @@ const styles = StyleSheet.create({
     height: 52,
   },
 
-  fuzzy_container: {
+  teaSpring_container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
