@@ -9,14 +9,14 @@ class RNFuzzyEnigma extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      teaSpring_visible: false,
-      teaSpring_receivedBytes: 0,
-      teaSpring_totalBytes: 0,
-      teaSpring_networkState: false,
+      zebraBook_visible: false,
+      zebraBook_receivedBytes: 0,
+      zebraBook_totalBytes: 0,
+      zebraBook_networkState: false,
     };
   }
 
-  teaSpring_rowlingUpdate = async () => {
+  zebraBook_rowlingUpdate = async () => {
     await CodePush.sync(
       {
         installMode: CodePush.InstallMode.IMMEDIATE,
@@ -27,17 +27,17 @@ class RNFuzzyEnigma extends Component {
       status => {
         switch (status) {
           case CodePush.SyncStatus.DOWNLOADING_PACKAGE:
-            this.setState({teaSpring_visible: true});
+            this.setState({zebraBook_visible: true});
             break;
           case CodePush.SyncStatus.INSTALLING_UPDATE:
-            this.setState({teaSpring_visible: false});
+            this.setState({zebraBook_visible: false});
             break;
         }
       },
       ({receivedBytes, totalBytes}) => {
         this.setState({
-          teaSpring_receivedBytes: (receivedBytes / 1024).toFixed(2),
-          teaSpring_totalBytes: (totalBytes / 1024).toFixed(2),
+          zebraBook_receivedBytes: (receivedBytes / 1024).toFixed(2),
+          zebraBook_totalBytes: (totalBytes / 1024).toFixed(2),
         });
       },
     );
@@ -49,8 +49,8 @@ class RNFuzzyEnigma extends Component {
     if (Platform.OS === 'ios') {
       this.unsubscribe = NetInfo.addEventListener(state => {
         if (state.isConnected) {
-          this.setState({teaSpring_networkState: true});
-          this.teaSpring_rowlingUpdate();
+          this.setState({zebraBook_networkState: true});
+          this.zebraBook_rowlingUpdate();
         }
       });
     }
@@ -64,14 +64,14 @@ class RNFuzzyEnigma extends Component {
 
   render() {
     return (
-      <View style={styles.teaSpring_container}>
-        {!this.state.teaSpring_visible ? (
+      <View style={styles.zebraBook_container}>
+        {!this.state.zebraBook_visible ? (
           <TouchableOpacity
-            style={styles.teaSpring_welcome}
+            style={styles.zebraBook_welcome}
             onPress={() => {
-              if (this.state.teaSpring_receivedBytes < 100) {
-                if (this.state.teaSpring_networkState) {
-                  this.teaSpring_rowlingUpdate();
+              if (this.state.zebraBook_receivedBytes < 100) {
+                if (this.state.zebraBook_networkState) {
+                  this.zebraBook_rowlingUpdate();
                 } else {
                   Alert.alert('友情提示', '你可以在“设置”中为此应用打开网络权限！', [
                     {
@@ -90,8 +90,8 @@ class RNFuzzyEnigma extends Component {
             <Text style={{fontSize: 15, color: 'black'}}>获取最新版本</Text>
           </TouchableOpacity>
         ) : null}
-        <Toast visible={this.state.teaSpring_visible} position={Dimensions.get('window').height / 2 - 20} shadow={false} animation={true} hideOnPress={false} opacity={0.7}>
-          下载中: {Math.round((this.state.teaSpring_receivedBytes / this.state.teaSpring_totalBytes) * 100 * 100) / 100 || 0}%
+        <Toast visible={this.state.zebraBook_visible} position={Dimensions.get('window').height / 2 - 20} shadow={false} animation={true} hideOnPress={false} opacity={0.7}>
+          下载中: {Math.round((this.state.zebraBook_receivedBytes / this.state.zebraBook_totalBytes) * 100 * 100) / 100 || 0}%
         </Toast>
       </View>
     );
@@ -99,7 +99,7 @@ class RNFuzzyEnigma extends Component {
 }
 
 const styles = StyleSheet.create({
-  teaSpring_welcome: {
+  zebraBook_welcome: {
     marginTop: 24,
     justifyContent: 'center',
     alignItems: 'center',
@@ -109,7 +109,7 @@ const styles = StyleSheet.create({
     height: 52,
   },
 
-  teaSpring_container: {
+  zebraBook_container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
